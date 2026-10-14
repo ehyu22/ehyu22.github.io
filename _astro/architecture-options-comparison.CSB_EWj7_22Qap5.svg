@@ -1,0 +1,84 @@
+<svg viewBox="0 0 960 470" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <style>
+    .outer   { fill: none; stroke: rgba(26,34,48,0.28); stroke-dasharray: 6 4; }
+    .card    { fill: #ffffff; stroke: rgba(26,34,48,0.18); }
+    .fg      { fill: #1A2230; }
+    .muted   { fill: #6B7587; }
+    .accent-card { fill: #E0F2FE; stroke: #0369A1; }
+    .accent-text { fill: #0369A1; }
+    .line    { stroke: #94A0B4; fill: none; }
+    .aline   { stroke: #0369A1; fill: none; }
+    .dot     { fill: #94A0B4; }
+    text     { font-size: 12px; }
+  </style>
+  <text x="480" y="30" text-anchor="middle" class="fg" font-size="18" font-weight="700">게이트웨이 아키텍처 후보 비교</text>
+  <rect class="outer" x="20" y="60" width="290" height="390" rx="12"/>
+  <text x="165" y="86" text-anchor="middle" class="fg" font-weight="700" font-size="14">1. 베어메탈 GW 노드</text>
+  <rect class="card" x="85" y="104" width="160" height="34" rx="8"/>
+  <text x="165" y="126" text-anchor="middle" class="fg">사용자 (서비스망)</text>
+  <path class="aline" d="M165,138 L165,176"/>
+  <rect class="accent-card" x="45" y="176" width="240" height="96" rx="10" stroke-width="1.5"/>
+  <text x="165" y="202" text-anchor="middle" class="accent-text" font-weight="700" font-size="13">전용 베어메탈 서버</text>
+  <text x="165" y="224" text-anchor="middle" class="muted" font-size="11">NIC 2장으로 두 망에 연결</text>
+  <text x="165" y="242" text-anchor="middle" class="muted" font-size="11">리버스 프록시 / S3 프록시</text>
+  <text x="165" y="260" text-anchor="middle" class="muted" font-size="11">이중화 시 서버 1대 추가</text>
+  <path class="aline" d="M165,272 L165,318"/>
+  <path class="line" d="M80,318 L250,318"/>
+  <path class="line" d="M80,318 L80,340"/>
+  <path class="line" d="M165,318 L165,340"/>
+  <path class="line" d="M250,318 L250,340"/>
+  <rect class="card" x="45" y="340" width="70" height="40" rx="6"/>
+  <rect class="card" x="130" y="340" width="70" height="40" rx="6"/>
+  <rect class="card" x="215" y="340" width="70" height="40" rx="6"/>
+  <text x="80" y="364" text-anchor="middle" class="fg" font-size="11">S3</text>
+  <text x="165" y="364" text-anchor="middle" class="fg" font-size="11">S3</text>
+  <text x="250" y="364" text-anchor="middle" class="fg" font-size="11">S3</text>
+  <text x="165" y="400" text-anchor="middle" class="muted" font-size="11">스토리지 노드 (스토리지망)</text>
+  <text x="165" y="432" text-anchor="middle" class="fg" font-size="11.5">전용 물리 서버 필요</text>
+  <rect class="outer" x="335" y="60" width="290" height="390" rx="12"/>
+  <text x="480" y="86" text-anchor="middle" class="fg" font-weight="700" font-size="14">2. OpenStack VM + IB 패스스루</text>
+  <rect class="card" x="400" y="104" width="160" height="34" rx="8"/>
+  <text x="480" y="126" text-anchor="middle" class="fg">사용자 (서비스망)</text>
+  <path class="aline" d="M480,138 L480,176"/>
+  <rect class="accent-card" x="360" y="176" width="240" height="96" rx="10" stroke-width="1.5"/>
+  <text x="480" y="202" text-anchor="middle" class="accent-text" font-weight="700" font-size="13">OpenStack VM</text>
+  <text x="480" y="224" text-anchor="middle" class="muted" font-size="11">스토리지 IB를 패스스루로 연결</text>
+  <text x="480" y="242" text-anchor="middle" class="muted" font-size="11">VM 위에서 프록시 구동</text>
+  <text x="480" y="260" text-anchor="middle" class="muted" font-size="11">물리 자원을 VM에 통째로 할당</text>
+  <path class="aline" d="M480,272 L480,318"/>
+  <path class="line" d="M395,318 L565,318"/>
+  <path class="line" d="M395,318 L395,340"/>
+  <path class="line" d="M480,318 L480,340"/>
+  <path class="line" d="M565,318 L565,340"/>
+  <rect class="card" x="360" y="340" width="70" height="40" rx="6"/>
+  <rect class="card" x="445" y="340" width="70" height="40" rx="6"/>
+  <rect class="card" x="530" y="340" width="70" height="40" rx="6"/>
+  <text x="395" y="364" text-anchor="middle" class="fg" font-size="11">S3</text>
+  <text x="480" y="364" text-anchor="middle" class="fg" font-size="11">S3</text>
+  <text x="565" y="364" text-anchor="middle" class="fg" font-size="11">S3</text>
+  <text x="480" y="400" text-anchor="middle" class="muted" font-size="11">스토리지 노드 (스토리지망)</text>
+  <text x="480" y="432" text-anchor="middle" class="fg" font-size="11.5">패스스루 설정 부담</text>
+  <rect class="outer" x="650" y="60" width="290" height="390" rx="12"/>
+  <text x="795" y="86" text-anchor="middle" class="fg" font-weight="700" font-size="14">3. K8s + Istio Envoy Pod (채택)</text>
+  <rect class="card" x="715" y="104" width="160" height="34" rx="8"/>
+  <text x="795" y="126" text-anchor="middle" class="fg">사용자 (서비스망)</text>
+  <path class="aline" d="M795,138 L795,176"/>
+  <rect class="accent-card" x="675" y="176" width="240" height="96" rx="10" stroke-width="1.5"/>
+  <text x="795" y="202" text-anchor="middle" class="accent-text" font-weight="700" font-size="13">Istio Envoy Pod</text>
+  <text x="795" y="224" text-anchor="middle" class="muted" font-size="11">두 망에 모두 물린 K8s 노드에 배치</text>
+  <text x="795" y="242" text-anchor="middle" class="muted" font-size="11">기존 클러스터 운영에 편입</text>
+  <text x="795" y="260" text-anchor="middle" class="muted" font-size="11">Pod 수로 스케일링</text>
+  <path class="aline" d="M795,272 L795,318"/>
+  <path class="line" d="M710,318 L880,318"/>
+  <path class="line" d="M710,318 L710,340"/>
+  <path class="line" d="M795,318 L795,340"/>
+  <path class="line" d="M880,318 L880,340"/>
+  <rect class="card" x="675" y="340" width="70" height="40" rx="6"/>
+  <rect class="card" x="760" y="340" width="70" height="40" rx="6"/>
+  <rect class="card" x="845" y="340" width="70" height="40" rx="6"/>
+  <text x="710" y="364" text-anchor="middle" class="fg" font-size="11">S3</text>
+  <text x="795" y="364" text-anchor="middle" class="fg" font-size="11">S3</text>
+  <text x="880" y="364" text-anchor="middle" class="fg" font-size="11">S3</text>
+  <text x="795" y="400" text-anchor="middle" class="muted" font-size="11">스토리지 노드 (스토리지망)</text>
+  <text x="795" y="432" text-anchor="middle" class="fg" font-size="11.5">별도 인프라 불필요</text>
+</svg>
