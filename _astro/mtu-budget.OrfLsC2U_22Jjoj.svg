@@ -1,0 +1,55 @@
+<svg viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans CJK KR', sans-serif">
+  <style>
+    .fg    { fill: #1A2230; }
+    .muted { fill: #6B7587; }
+    .hdr   { fill: #E5E7EB; stroke: rgba(26,34,48,0.25); }
+    .inner { fill: #E0F2FE; stroke: #0369A1; }
+    .data  { fill: #BAE6FD; stroke: #0369A1; }
+    .accent-text { fill: #0369A1; }
+    .ok-card  { fill: #DCFCE7; stroke: #15803D; }
+    .ok-text  { fill: #15803D; }
+    .bad-card { fill: #FEE2E2; stroke: #DC2626; }
+    .bad-text { fill: #B91C1C; }
+    .guide { stroke: #94A0B4; stroke-dasharray: 4 4; fill: none; }
+    text { font-size: 13px; }
+  </style>
+
+  <text x="480" y="32" text-anchor="middle" class="fg" font-size="18" font-weight="700">VXLAN 캡슐화 후 MTU와 MSS</text>
+
+  <!-- row 1: outer packet on the service network -->
+  <text x="40" y="78" class="fg" font-weight="700">서비스망에 실제로 나가는 패킷 (MTU 1500)</text>
+  <rect class="hdr" x="40" y="92" width="240" height="48" rx="4"/>
+  <text x="160" y="113" text-anchor="middle" class="fg" font-weight="700">VXLAN 포장 50</text>
+  <text x="160" y="130" text-anchor="middle" class="muted" font-size="11">IP 20 · UDP 8 · VXLAN 8 · Eth 14</text>
+  <rect class="inner" x="280" y="92" width="640" height="48" rx="4"/>
+  <text x="600" y="121" text-anchor="middle" class="accent-text" font-weight="700">Pod가 보낸 원래 IP 패킷 — 최대 1450</text>
+
+  <!-- expand guides -->
+  <path class="guide" d="M280,140 L40,200"/>
+  <path class="guide" d="M920,140 L920,200"/>
+
+  <!-- row 2: inside the 1450 -->
+  <text x="40" y="190" class="fg" font-weight="700">그 1450바이트 안 (TCP)</text>
+  <rect class="hdr" x="40" y="200" width="110" height="48" rx="4"/>
+  <text x="95" y="229" text-anchor="middle" class="fg">IP 20</text>
+  <rect class="hdr" x="150" y="200" width="110" height="48" rx="4"/>
+  <text x="205" y="229" text-anchor="middle" class="fg">TCP 20</text>
+  <rect class="hdr" x="260" y="200" width="110" height="48" rx="4"/>
+  <text x="315" y="221" text-anchor="middle" class="fg">타임스탬프 12</text>
+  <text x="315" y="238" text-anchor="middle" class="muted" font-size="11">TCP 옵션</text>
+  <rect class="data" x="370" y="200" width="550" height="48" rx="4"/>
+  <text x="645" y="229" text-anchor="middle" class="accent-text" font-weight="700">데이터 최대 1398</text>
+
+  <!-- MSS bracket -->
+  <path d="M260,262 L260,270 L920,270 L920,262" stroke="#0369A1" fill="none" stroke-width="1.5"/>
+  <text x="590" y="292" text-anchor="middle" class="accent-text" font-weight="700">MSS 1410 = 1450 − IP 20 − TCP 20  (Pod가 SYN-ACK로 알리는 값)</text>
+
+  <!-- compare -->
+  <rect class="ok-card" x="40" y="330" width="880" height="72" rx="8"/>
+  <text x="60" y="358" class="ok-text" font-weight="700">새 Pod (Cilium mtu 1500 명시)</text>
+  <text x="60" y="384" class="fg">라우트 MTU 1450 → MSS 1410 알림 → 클라이언트 패킷 최대 1450 → 터널 통과 ✓</text>
+
+  <rect class="bad-card" x="40" y="418" width="880" height="72" rx="8"/>
+  <text x="60" y="446" class="bad-text" font-weight="700">기존 Pod (IB 기준 자동 감지)</text>
+  <text x="60" y="472" class="fg">라우트 MTU 4042 → MSS 4002 알림 → 클라이언트는 자기 한계(1500)까지 채움 → 1500 &gt; 1450 → Control Plane에서 버림 ✗</text>
+</svg>

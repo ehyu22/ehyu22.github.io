@@ -1,0 +1,84 @@
+<svg viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans CJK KR', sans-serif">
+  <style>
+    .fg    { fill: #1A2230; }
+    .muted { fill: #6B7587; }
+    .step  { fill: #ffffff; stroke: rgba(26,34,48,0.22); }
+    .num   { fill: #1A2230; }
+    .list  { fill: #F6F7F9; stroke: rgba(26,34,48,0.15); }
+    .pick  { fill: #FEE2E2; stroke: #DC2626; }
+    .bad-card { fill: #FEE2E2; stroke: #DC2626; }
+    .bad-text { fill: #B91C1C; }
+    .ok-card  { fill: #DCFCE7; stroke: #15803D; }
+    .ok-text  { fill: #15803D; }
+    .arrow { stroke: #94A0B4; stroke-width: 2; fill: none; }
+    .mono  { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 12px; }
+    text { font-size: 13px; }
+  </style>
+  <defs>
+    <marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94A0B4"/></marker>
+  </defs>
+
+  <text x="480" y="30" text-anchor="middle" class="fg" font-size="18" font-weight="700">Cilium v1.11 에이전트가 Worker에서 MTU를 정한 순서</text>
+
+  <!-- step 1 -->
+  <rect class="step" x="20" y="56" width="290" height="96" rx="10"/>
+  <circle class="num" cx="46" cy="82" r="13"/>
+  <text x="46" y="87" text-anchor="middle" fill="#ffffff" font-weight="700">1</text>
+  <text x="68" y="87" class="fg" font-weight="700">노드 IP 자동 선택</text>
+  <text x="38" y="114" class="muted">모든 IPv4를 오름차순 정렬,</text>
+  <text x="38" y="134" class="muted">가장 낮은 주소를 고른다</text>
+
+  <path class="arrow" d="M312,104 L338,104" marker-end="url(#m)"/>
+
+  <!-- step 2 -->
+  <rect class="step" x="340" y="56" width="290" height="96" rx="10"/>
+  <circle class="num" cx="366" cy="82" r="13"/>
+  <text x="366" y="87" text-anchor="middle" fill="#ffffff" font-weight="700">2</text>
+  <text x="388" y="87" class="fg" font-weight="700">MTU 감지</text>
+  <text x="358" y="114" class="muted">그 IP가 붙은 인터페이스의</text>
+  <text x="358" y="134" class="muted">MTU를 그대로 쓴다 (터널은 −50)</text>
+
+  <path class="arrow" d="M632,104 L658,104" marker-end="url(#m)"/>
+
+  <!-- step 3 -->
+  <rect class="step" x="660" y="56" width="280" height="96" rx="10"/>
+  <circle class="num" cx="686" cy="82" r="13"/>
+  <text x="686" y="87" text-anchor="middle" fill="#ffffff" font-weight="700">3</text>
+  <text x="708" y="87" class="fg" font-weight="700">Kubernetes 노드 정보 수신</text>
+  <text x="678" y="114" class="muted">InternalIP를 받아 터널</text>
+  <text x="678" y="134" class="muted">엔드포인트로 쓴다 (MTU는 이미 끝)</text>
+
+  <!-- step 1 detail: sorted list -->
+  <text x="38" y="186" class="fg" font-weight="700">Worker의 IPv4 (정렬 후)</text>
+  <rect class="list" x="20" y="196" width="290" height="236" rx="8"/>
+  <rect class="pick" x="30" y="206" width="270" height="26" rx="4"/>
+  <text x="42" y="224" class="mono bad-text" font-weight="700">10.3.4.x</text><text x="150" y="224" class="mono bad-text" font-weight="700">ibs1  ← 선택</text>
+  <text x="42" y="254" class="mono fg">10.3.5.x</text><text x="150" y="254" class="mono fg">ibs0</text>
+  <text x="42" y="280" class="mono fg">10.3.6.x</text><text x="150" y="280" class="mono fg">ibs7</text>
+  <text x="42" y="306" class="mono fg">10.3.7.x</text><text x="150" y="306" class="mono fg">ibs6</text>
+  <text x="42" y="332" class="mono fg">10.3.8.x</text><text x="150" y="332" class="mono fg">ibs2</text>
+  <text x="42" y="358" class="mono fg">10.3.9.x</text><text x="150" y="358" class="mono fg">ibs3</text>
+  <text x="42" y="384" class="mono fg">10.11.32.x</text><text x="150" y="384" class="mono fg">bond0  (서비스망)</text>
+  <text x="42" y="410" class="mono muted">172.17.0.1</text><text x="150" y="410" class="mono muted">docker0</text>
+
+  <!-- step 2 detail -->
+  <rect class="bad-card" x="340" y="196" width="290" height="110" rx="8"/>
+  <text x="485" y="226" text-anchor="middle" class="bad-text" font-weight="700">ibs1 → MTU 4092</text>
+  <text x="485" y="254" text-anchor="middle" class="fg">터널 MTU 4042</text>
+  <text x="485" y="280" text-anchor="middle" class="fg">Pod MSS 4002</text>
+
+  <!-- step 3 detail -->
+  <rect class="ok-card" x="660" y="196" width="280" height="110" rx="8"/>
+  <text x="800" y="226" text-anchor="middle" class="ok-text" font-weight="700">InternalIP 10.11.32.x (bond0)</text>
+  <text x="800" y="254" text-anchor="middle" class="fg">VXLAN은 서비스망으로</text>
+  <text x="800" y="280" text-anchor="middle" class="fg">정상적으로 나간다</text>
+
+  <path class="arrow" d="M312,219 L338,240" marker-end="url(#m)"/>
+
+  <!-- conclusion -->
+  <text x="635" y="360" text-anchor="middle" class="bad-text" font-size="14" font-weight="700">터널은 bond0(1500)를 타는데, MTU만 ibs1(4092)을 따라갔다</text>
+  <text x="635" y="388" text-anchor="middle" class="muted">노드 주소·CiliumNode·기본 라우트는 모두 bond0를 가리켜서</text>
+  <text x="635" y="408" text-anchor="middle" class="muted">겉으로는 4092가 나올 이유가 보이지 않았다</text>
+
+  <text x="480" y="480" text-anchor="middle" class="muted" font-size="12">mtu 값을 명시하면 2단계 자동 감지를 건너뛴다 · v1.17부터는 링크 중 가장 작은 MTU를 고르도록 바뀌었다</text>
+</svg>

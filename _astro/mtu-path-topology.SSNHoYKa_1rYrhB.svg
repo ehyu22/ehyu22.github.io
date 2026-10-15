@@ -1,0 +1,82 @@
+<svg viewBox="0 0 960 605" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <style>
+    .outer   { fill: none; stroke: rgba(26,34,48,0.28); stroke-dasharray: 6 4; }
+    .card    { fill: #ffffff; stroke: rgba(26,34,48,0.18); }
+    .bar     { fill: #F1F3F7; stroke: rgba(26,34,48,0.22); }
+    .fg      { fill: #1A2230; }
+    .muted   { fill: #6B7587; }
+    .accent-card { fill: #E0F2FE; stroke: #0369A1; }
+    .accent-text { fill: #0369A1; }
+    .bad-card { fill: #FEE2E2; stroke: #DC2626; }
+    .bad-text { fill: #B91C1C; }
+    .ok-text  { fill: #15803D; }
+    .line    { stroke: #94A0B4; fill: none; stroke-width: 1.5; }
+    .aline   { stroke: #0369A1; fill: none; stroke-width: 2; stroke-dasharray: 7 5; }
+    .bline   { stroke: #DC2626; fill: none; stroke-width: 2; }
+    text     { font-size: 12px; }
+  </style>
+
+  <text x="480" y="30" text-anchor="middle" class="fg" font-size="18" font-weight="700">패킷 경로와 노드별 MTU</text>
+
+  <!-- client / firewall -->
+  <rect class="card" x="395" y="52" width="170" height="40" rx="8"/>
+  <text x="480" y="77" text-anchor="middle" class="fg" font-weight="700">사용자 (외부, 1500)</text>
+  <text x="575" y="77" class="bad-text" font-size="11">ICMP 못 받음</text>
+  <path class="line" d="M480,92 L480,118"/>
+  <rect class="card" x="395" y="118" width="170" height="36" rx="8"/>
+  <text x="480" y="141" text-anchor="middle" class="fg">방화벽 (NAT)</text>
+  <path class="line" d="M480,154 L480,190"/>
+
+  <!-- other services (normal) -->
+  <rect class="card" x="720" y="112" width="210" height="48" rx="8"/>
+  <text x="825" y="133" text-anchor="middle" class="fg" font-weight="700">VM · 베어메탈 서비스</text>
+  <text x="825" y="150" text-anchor="middle" class="ok-text" font-size="11">같은 망 · 정상</text>
+  <path class="line" d="M825,160 L825,190"/>
+
+  <!-- service switch -->
+  <rect class="bar" x="20" y="190" width="920" height="40" rx="8"/>
+  <text x="40" y="215" class="fg" font-weight="700">서비스망 스위치</text>
+  <text x="920" y="215" text-anchor="end" class="muted">MTU 1500</text>
+
+  <!-- node A -->
+  <rect class="outer" x="40" y="290" width="400" height="150" rx="12"/>
+  <text x="158" y="312" class="muted">Control Plane (VIP · NodePort 진입)</text>
+  <rect class="card" x="58" y="326" width="170" height="32" rx="6"/>
+  <text x="143" y="347" text-anchor="middle" class="fg">서비스 NIC · 1500</text>
+  <rect class="accent-card" x="58" y="384" width="170" height="32" rx="6"/>
+  <text x="143" y="405" text-anchor="middle" class="accent-text">터널 MTU 1450 (정상)</text>
+  <text x="250" y="347" class="muted" font-size="11">IB 없음 · NIC 1개</text>
+
+  <!-- node B -->
+  <rect class="outer" x="520" y="290" width="400" height="150" rx="12"/>
+  <text x="638" y="312" class="muted">Worker (서비스 Pod)</text>
+  <rect class="card" x="538" y="326" width="170" height="32" rx="6"/>
+  <text x="623" y="347" text-anchor="middle" class="fg">서비스 NIC · 1500</text>
+  <rect class="card" x="730" y="326" width="170" height="32" rx="6"/>
+  <text x="815" y="347" text-anchor="middle" class="fg">IB (ibs*) · 4092</text>
+  <rect class="bad-card" x="538" y="384" width="170" height="32" rx="6"/>
+  <text x="623" y="405" text-anchor="middle" class="bad-text" font-weight="700">터널 MTU 4042</text>
+  <rect class="bad-card" x="730" y="384" width="170" height="32" rx="6"/>
+  <text x="815" y="405" text-anchor="middle" class="bad-text" font-weight="700">Pod MSS 4002</text>
+
+  <!-- service links -->
+  <path class="line" d="M143,230 L143,326"/>
+  <path class="line" d="M623,230 L623,326"/>
+
+  <!-- vxlan tunnel -->
+  <path class="aline" d="M228,400 L538,400"/>
+  <text x="383" y="390" text-anchor="middle" class="accent-text" font-weight="700">VXLAN 터널 (+50B)</text>
+
+  <!-- pod uses vxlan -->
+  <path class="line" d="M730,400 L708,400"/>
+
+  <!-- IB -->
+  <path class="line" d="M900,342 L910,342 L910,500"/>
+  <rect class="bar" x="20" y="500" width="920" height="40" rx="8"/>
+  <text x="40" y="525" class="fg" font-weight="700">InfiniBand 스위치 → 스토리지</text>
+  <text x="920" y="525" text-anchor="end" class="muted">MTU 4092</text>
+
+  <!-- explanation -->
+  <text x="480" y="568" text-anchor="middle" class="bad-text" font-weight="700">Worker는 IB(4092) 기준, Control Plane은 1450 → 1500바이트 패킷이 Control Plane에서 막히고</text>
+  <text x="480" y="588" text-anchor="middle" class="bad-text" font-weight="700">"줄여라" ICMP는 방화벽 너머 사용자에게 닿지 않음 (PMTU 블랙홀)</text>
+</svg>
